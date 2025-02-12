@@ -1,0 +1,129 @@
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { createSession, getOnlineInfo } from '@/api/app'
+import { useRoute } from 'vue-router'
+
+// 获取路由参数
+const $route = useRoute()
+const { bot_id } = $route.query
+// 智能体信息
+const agentInfo = reactive({
+  bot_id: '',
+  icon_url: '',
+  name: ''
+})
+// 聊天列表
+const chatList = ref([])
+// 输入框的值
+const inputValue = ref('')
+
+onMounted(() => {
+  getOnlineInfoFn()
+})
+// 根据 bot_id 获取智能体信息
+const getOnlineInfoFn = async () => {
+  const res = await getOnlineInfo({ bot_id })
+  // 批量更新智能体信息
+  Object.assign(agentInfo, res.data)
+}
+// 发送消息
+const createSessionFn = async () => {
+  if (!inputValue.value) return
+  const { bot_id } = agentInfo
+  const content = inputValue.value
+  const params = {
+    bot_id: bot_id,
+    user_id: 'admin',
+    stream: true,
+    auto_save_history: true,
+    additional_messages: [
+      {
+        role: 'user',
+        content: content,
+        content_type: 'text'
+      }
+    ]
+  }
+  // 通过流式响应接收消息
+  const res = await createSession(params, {
+    onDownloadProgress: (progressEvent) => {
+      console.log(progressEvent)
+    }
+  })
+  chatList.value.push({
+    id: res.data.id,
+    type: 'user',
+    content
+  })
+  inputValue.value = ''
+}
+</script>
+
+<template>
+  <!-- 生成一个聊天界面 -->
+  <div class="chat">
+    <div class="chat-header">
+      <img :src="agentInfo.icon_url" alt="icon" />
+      <p>{{ agentInfo.name }}</p>
+    </div>
+    <div class="chat-content">
+      <div v-for="item in chatList" :key="item.id" class="chat-item">
+        <div v-if="item.type === 'user'" class="chat-item-user">
+          <p>{{ item.content }}</p>
+        </div>
+        <div v-else class="chat-item-agent">
+          <p>{{ item.content }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input">
+      <input v-model="inputValue" @keyup.enter="createSessionFn" />
+      <button @click="createSessionFn">发送</button>
+    </div>
+  </div>
+</template>
+<style scoped>
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.chat-header img {
+  width: 50px;
+  height: 50px;
+}
+.chat-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+.chat-item {
+  margin: 10px 0;
+}
+.chat-item-user {
+  text-align: right;
+}
+.chat-item-agent {
+  text-align: left;
+}
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+.chat-input input {
+  flex: 1;
+  padding: 5px;
+  margin-right: 10px;
+}
+.chat-input button {
+  padding: 5px 10px;
+}
+</style>
