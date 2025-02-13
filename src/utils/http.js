@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus'
 // 创建axios实例
 const service = axios.create({
   timeout: 10000, // 请求超时时间
-  baseURL: '/api',
+  baseURL: import.meta.env.PROD ? 'https://api.coze.cn' : '/api',
 })
 
 // request拦截器
