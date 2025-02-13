@@ -12,7 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     // do something before request is sent
-    config.headers['Authorization'] = 'Bearer ' + import.meta.env.VITE_TOKEN
+    config.headers['Authorization'] = 'Bearer ' + 'pat_xFIDz8MA21VGnNdJ8DAeTMAOptcTFvWYnJ5EFEvxa9n9UbL4N1uL6cv2lcv9cJhx' //import.meta.env.VITE_TOKEN
     return config
   },
   (error) => {
