@@ -16,14 +16,24 @@ export function getOnlineInfo(params) {
     params
   })
 }
-
-// 发起会话
-export function createSession(data, { onDownloadProgress }) {
+// 创建会话
+// export function createConversation(data) {
+//   return request({
+//     url: '/v1/conversation/create',
+//     method: 'POST',
+//     data,
+//   })
+// }
+// 发起对话
+export function createSession(data) {
   return request({
     url: '/v3/chat',
     method: 'POST',
     data,
+    headers: {
+        Accept: 'text/event-stream',
+    },
     responseType: 'stream',
-    onDownloadProgress
+    adapter: 'fetch'
   })
 }

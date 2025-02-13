@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus'
 // 创建axios实例
 const service = axios.create({
   timeout: 10000, // 请求超时时间
-  baseURL: '/api'
+  baseURL: '/api',
 })
 
 // request拦截器
@@ -25,6 +25,11 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
   (response) => {
+    console.log(response);
+    // 判断返回格式 responseType: 'stream' 为流式响应，直接返回所有数据
+    if (response.config.responseType === 'stream') {
+      return response
+    }
     const res = response.data
     if (res.code !== 0) {
       ElMessage.error(res.msg)
