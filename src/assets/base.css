@@ -1,3 +1,25 @@
 body{
   margin: 0;
 }
+*{
+  font-family: PingFang SC, Noto Sans SC, sans-serif;
+}
+ol,ul{
+  margin: 0;
+  padding-left: 1rem;
+}
+h1,h2,h3,h4,h5,h6{
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+p{
+  margin: 0.5rem 0;
+}
+pre{
+  white-space: pre-wrap;
+  background-color: black;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  color: white;
+  border-radius: 0.2rem;
+}

@@ -2,7 +2,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import { createSession, getOnlineInfo } from '@/api/app'
 import { useRoute } from 'vue-router'
-import { parseEventStream } from '@/utils/index'
+import { parseEventStream, scrollToBottom } from '@/utils/index'
+import { marked } from 'marked'
 
 // 获取路由参数
 const $route = useRoute()
@@ -31,6 +32,7 @@ const getOnlineInfoFn = async () => {
 }
 // 发送消息
 const createSessionFn = async () => {
+  const chat_content_el = document.querySelector('.chat-content')
   if (!inputValue.value) return
   const { bot_id } = state.agentInfo
   const content = inputValue.value
@@ -39,6 +41,7 @@ const createSessionFn = async () => {
     content,
     type: 'user'
   })
+  scrollToBottom(chat_content_el)
   inputValue.value = ''
   const params = {
     bot_id: bot_id,
@@ -76,11 +79,12 @@ const createSessionFn = async () => {
       // 判断如果state.chatMessageList 存在id一致的，则文本追加
       const id_index = state.chatMessageList.findIndex((c) => c.id === chat_agent_message_id)
       if (id_index > -1) {
-        state.chatMessageList[id_index].content = answer_data_content
+        state.chatMessageList[id_index].content = marked(answer_data_content)
       } else {
         state.chatMessageList.push(chat_agent_message)
       }
       console.log(state.chatMessageList)
+      scrollToBottom(chat_content_el)
     }
   })
 }
@@ -112,10 +116,10 @@ const handleStreamList = (stream_list) => {
       <div class="chat-content">
         <div v-for="item in state.chatMessageList" :key="item.id" class="chat-item">
           <div v-if="item.type === 'user'" class="chat-item-user">
-            <p>{{ item.content }}</p>
+            <p v-html="item.content"></p>
           </div>
           <div v-else class="chat-item-agent">
-            <p>{{ item.content }}</p>
+            <p v-if="item.content" v-html="item.content"></p>
           </div>
         </div>
       </div>
@@ -144,16 +148,31 @@ const handleStreamList = (stream_list) => {
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #f3f3f3;
+  font-size: 0.88rem;
+  color: #5a5a5a;
 }
 .chat-header img {
-  width: 50px;
-  height: 50px;
+  width: 4rem;
+  height: 4rem;
+  margin-right: 1rem;
 }
 .chat-content {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
+  color: #222;
+  font-size: 0.88rem;
+  font-weight: 200;
+}
+.chat-content p {
+  display: inline-block;
+  padding: 0.8rem;
+  margin: 0;
+  background: #f3f3f3;
+  border-radius: 0.5rem;
+  line-height: 1.5em;
+  letter-spacing: 0.1em;
 }
 .chat-item {
   margin: 10px 0;
@@ -161,21 +180,39 @@ const handleStreamList = (stream_list) => {
 .chat-item-user {
   text-align: right;
 }
+.chat-item-user p {
+  background: #d0bef3;
+}
 .chat-item-agent {
   text-align: left;
 }
 .chat-input {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-top: 1px solid #ddd;
+  padding: 0.8rem;
+  border-top: 1px solid #f3f3f3;
+  height: 2.5rem;
 }
 .chat-input input {
-  flex: 1;
-  padding: 5px;
+  display: block;
+  width: 100%;
+  height: 100%;
   margin-right: 10px;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  border: 1px solid #e0e0e0;
+  outline: none;
+  padding: 0.5rem;
+  color: #5a5a5a;
 }
 .chat-input button {
+  min-width: 25%;
+  height: 100%;
   padding: 5px 10px;
+  background: #8a53f9;
+  color: white;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
 }
 </style>

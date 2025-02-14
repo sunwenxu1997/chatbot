@@ -53,3 +53,10 @@ export function recursiveParseJSON(value) {
     return value
   }
 }
+// 标签滚动条置底
+export function scrollToBottom(el) {
+    el.scrollTo({
+        top: el.scrollHeight,
+        // behavior: 'smooth'
+    })
+}

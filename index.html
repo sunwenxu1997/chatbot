@@ -12,7 +12,7 @@
     <script type="module" src="/src/main.js"></script>
   </body>
   <script>
-    new CozeWebSDK.WebChatClient({
+    window.cozeWebSDK = new CozeWebSDK.WebChatClient({
       config: {
         bot_id: '7355680398808465444'
       },
@@ -25,7 +25,23 @@
         onRefreshToken: () => 'pat_xFIDz8MA21VGnNdJ8DAeTMAOptcTFvWYnJ5EFEvxa9n9UbL4N1uL6cv2lcv9cJhx'
       },
       componentProps: {
-        title: 'Coze'
+        title: 'AI助手'
+      },
+      // userInfo: {
+      //   id: '123',
+      //   url: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
+      //   nickname: '3qweqweqwe'
+      // },
+      ui: {
+        base: {
+          zIndex: 99
+        },
+        asstBtn: {
+          isNeed: false
+        },
+        footer: {
+          isShow: false
+        }
       }
     })
   </script>
