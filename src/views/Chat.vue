@@ -163,7 +163,7 @@ const handleStreamList = (stream_list) => {
   padding: 10px;
   color: #222;
   font-size: 0.88rem;
-  font-weight: 200;
+  font-weight: 400;
 }
 .chat-content p {
   display: inline-block;
@@ -214,5 +214,7 @@ const handleStreamList = (stream_list) => {
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
 }
 </style>
